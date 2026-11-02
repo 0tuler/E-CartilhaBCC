@@ -1,7 +1,6 @@
 import './Video.tsx';
-import * as jsonFiles from '../data/*.json';
 import { useState, useMemo } from 'react';
-import { PlayerIcon } from './PlayerIcon.tsx';
+//import { PlayerIcon } from './PlayerIcon.tsx';
 
 function VideoComponent({ video }: { video: Video }) {
   return (
@@ -77,11 +76,16 @@ export function App() {
   
   // Memoização para não recalcular a lista a cada clique
   const { video_hashlist, names } = useMemo(() => {
-    const jsonValues = Object.values(jsonFiles) as Video[];
+    // Modificado para funcionar com o vite ao invés do parcel
+    const modules = import.meta.glob('../data/*.json', { eager: true });
+
+    const jsonValues = Object.values(modules).map((mod: any) => mod.default) as Video[];
     const hashlist: Record<string, Video> = {};
     
     jsonValues.forEach((v) => {
-      hashlist[v.titulo] = v;
+      if (v && v.titulo) {
+        hashlist[v.titulo] = v;
+      }
     });
 
     return {

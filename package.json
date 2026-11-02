@@ -1,12 +1,13 @@
 {
   "homepage": "https://YOUR_USERNAME.github.io/TrabGrupoHabSoc",
-  "name": "parcel-react-client-starter",
+  "name": "trabgrupohabsoc",
   "private": true,
   "version": "0.0.0",
-  "source": "src/index.html",
+  "type": "module",
   "scripts": {
-    "start": "concurrently \"npx @tailwindcss/cli -i ./styles.css -o ./src/tailwind.css --watch\" \"parcel src/index.html\"",
-    "build": "npx @tailwindcss/cli -i ./styles.css -o ./src/tailwind.css && parcel build src/index.html --public-url /TrabGrupoHabSoc/",
+    "dev": "vite --host",
+    "build": "vite build",
+    "preview": "vite preview",
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
@@ -14,15 +15,12 @@
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
-    "@parcel/resolver-glob": "^2.16.4",
-    "@tailwindcss/cli": "^4.3.3",
-    "@tailwindcss/postcss": "^4.3.3",
+    "@tailwindcss/vite": "^4.3.3",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
-    "concurrently": "^9.2.5",
+    "@vitejs/plugin-react": "^4.2.0",
     "gh-pages": "^6.3.0",
-    "parcel": "^2.14.0",
-    "postcss": "^8.5.31",
-    "tailwindcss": "^4.3.3"
+    "tailwindcss": "^4.3.3",
+    "vite": "^5.0.0"
   }
 }
