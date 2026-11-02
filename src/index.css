@@ -1,0 +1,40 @@
+@import "tailwindcss";
+@theme {
+  /* Utilizada para a entrada do menu de tópicos*/
+  --animate-fade-in-right: fade-in-up 0.5s ease-out forwards;
+  /* Utilizada para a saída do menu de tópicos*/
+  --animate-fade-out-left: fade-out-left 0.5s ease-out forwards;
+  /*Utilizada para a entrada do vídeo, dessa forma ele tem tempo para carregar para o usuário*/
+  --animate-appear: appear 0.7s ease-out forwards;
+
+  @keyframes fade-in-up {
+    0% {
+      opacity: 0;
+      transform: translateX(-100%);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes fade-out-left {
+    0% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    100% {
+      opacity: 0;
+      transform: translateX(-100%);
+    }
+  }
+
+  @keyframes appear {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+}
