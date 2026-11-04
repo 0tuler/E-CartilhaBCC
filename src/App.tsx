@@ -4,15 +4,18 @@ import type { Dispatch, SetStateAction } from 'react';
 import { useState, useMemo, useEffect } from 'react';
 import MenuIcon from './MenuIcon_opt.svg?react';
 import HelpButton from './HelpButton_opt.svg?react';
+import Markdown from 'react-markdown'
 
 // Player de video, preciso melhorar isso aqui
-function VideoPlayer({ video }: { video: Video }) {
+function VideoPlayer({ video, markdownText }: { video: Video, markdownText: string }) {
+  
+
   return (
-    <div className="animate-appear flex flex-col md:flex-row w-full max-w-5xl h-full items-center justify-center gap-8 p-6 overflow-scroll">
+    <div className="animate-appear flex flex-col w-full max-w-5xl items-center justify-center gap-8 p-6 overflow-scroll">
       {/* Container do player */}
-      <div className="h-[65vh] md:h-[80vh] aspect-9/16 bg-player border shrink-0 border-divider">
+      <div className="w-full h-[80vh] md:h-[80vh] aspect-9/16 bg-player border shrink-0 border-divider">
         <iframe
-          className="w-full h-full overflow-visible"
+          className="w-full h-full md:max-h-[80vh] overflow-visible"
           src={video.link}
           title={video.titulo}
           frameBorder="0"
@@ -22,13 +25,11 @@ function VideoPlayer({ video }: { video: Video }) {
       </div>
 
       {/* Textos */}
-      <div className="flex flex-col text-left w-full max-w-sm overflow-scroll">
+      <div className="flex flex-col w-full max-w-[98%] text-justify text-lg">
         <h2 className="text-2xl font-bold text-title mb-3">
           {video.titulo}
         </h2>
-        <p className="text-secondary text-sm md:text-base leading-relaxed whitespace-pre-line">
-          {video.sobre}
-        </p>
+        <Markdown>{markdownText}</Markdown>
       </div>
     </div>
   );
@@ -65,7 +66,7 @@ function TopicsBar({
   return (
     <aside 
       onAnimationEnd={onAnimationEnd}
-      className={`${enabled ? 'animate-fade-in-right' : 'animate-fade-out-left'} w-full sm:w-[30%] bg-surface border-r border-divider flex flex-col shrink-0 h-full`}
+      className={`${enabled ? 'animate-fade-in-right' : 'animate-fade-out-left'} w-full sm:w-[30%] bg-surface border-r border-divider flex flex-col shrink-0 h-screen`}
     >
       <div className="p-4 border-b border-divider">
         <h2 className="text-sm font-bold uppercase tracking-wide text-selected">
@@ -106,12 +107,14 @@ function TopicsToggle({topicsEnabler} : {topicsEnabler: Dispatch<SetStateAction<
 }
 
 function EmptyState() {
-  return <div className="flex flex-col items-center text-center p-8 text-muted">
-  <h2 className="text-xl font-bold text-selected mb-1">
+  return <div className="h-screen flex flex-col justify-center items-center text-center p-8 text-muted">
+  <h2 className="text-2xl font-bold text-selected mb-1">
   Nenhum tópico selecionado
   </h2>
-  <p className="text-md">
-  Selecione um tópico no menu lateral para visualizar o vídeo.
+  <p className="text-lg font-bold">
+  Selecione um tópico no menu lateral para visualizar o vídeo.<br/>
+  Clique no botão de menu no canto superior direito para visualizar os tópicos disponíveis <br/>
+  caso esqueça como utilizar a aplicativo, clique no botão de ajuda no topo esquerdo.
     </p>
   </div>
 }
@@ -169,7 +172,7 @@ function HelpPopUp({
           
           <div className="flex justify-between items-center border-b border-divider pb-4">
             <DialogTitle className="font-bold uppercase tracking-wide text-selected">
-              <HelpButton width={36} height={36}/> Menu de Ajuda
+              <HelpButton width={36} height={36} className=""/> Menu de Ajuda
             </DialogTitle>
             
             {/* Botão para fechar */}
@@ -204,32 +207,44 @@ export function App() {
   const [selected, setSelected] = useState<string>("");
   const [topicsEnable, setTopicsEnable] = useState<boolean>(false);
   const [helpEnable, setHelpEnable] = useState<boolean>(false);
-  // Memoização para não recalcular a lista a cada clique
-  const { video_hashlist, names } = useMemo(() => {
-    const modules = import.meta.glob('../data/*.json', { eager: true });
-    const jsonValues = Object.values(modules).map((mod: any) => mod.default) as Video[];
-    const hashlist: Record<string, Video> = {};
+  // Memoização para não recalcular a lista a cada clique, markdown adicionado
+  const { video_hashlist, md_hashlist, names } = useMemo(() => {
+    const jsonModules = import.meta.glob('../data/*.json', { eager: true });
+    const mdModules = import.meta.glob('../data/*.md', { query: '?raw', import: 'default', eager: true });
+    const jsonValues = Object.values(jsonModules).map((mod: any) => mod.default) as Video[];
     
+    const v_hashlist: Record<string, Video> = {};
+    const m_hashlist: Record<string, string> = {}; // Hashlist separada para o texto MD
+    
+
     jsonValues.forEach((v) => {
       if (v && v.titulo) {
-        hashlist[v.titulo] = v;
+        v_hashlist[v.titulo] = v;
+        
+        const pathToMd = v.caminho; 
+        if (pathToMd && mdModules[pathToMd]) {
+          m_hashlist[v.titulo] = mdModules[pathToMd] as string;
+        } else {
+          m_hashlist[v.titulo] = "*Texto não encontrado para este vídeo.*";
+        }
       }
     });
 
     return {
-      video_hashlist: hashlist,
+      video_hashlist: v_hashlist,
+      md_hashlist: m_hashlist,
       names: jsonValues.map((v) => v.titulo)
     };
   }, []);
 
   return (
-    <div className="flex flex-col w-full h-screen bg-background text-base overflow-hidden font-sans">
+    <div className="flex flex-col w-full bg-background text-base font-sans">
       {/* Header do menu */}
       <header className="px-6 py-4 bg-surface border-b border-divider flex items-center shrink-0">
-        <div className="flex flex-row items-center justify-center align-middle w-full">
+        <div className="flex flex-row items-center justify-between align-middle w-full">
           <TopicsToggle topicsEnabler={setTopicsEnable}/>
           <div className="my-0 mx-auto">
-            <div className="flex flex-row items-center text-xl font-semibold text-title">
+            <div className="flex flex-row items-center text-lg sm:text-2xl font-semibold text-title">
                 <h1>{selected === "" ? "E-Cartilha BCC" : selected}</h1>
             </div>  
           </div>
@@ -249,7 +264,7 @@ export function App() {
 
         <main className="flex-1 flex flex-col justify-center items-center w-full h-full overflow-hidden">
           {selected !== "" && video_hashlist[selected] ? (
-            <VideoPlayer video={video_hashlist[selected]} />
+            <VideoPlayer video={video_hashlist[selected]} markdownText={md_hashlist[selected]} />
           ) : (
             /* Estado vazio */
             <EmptyState/>

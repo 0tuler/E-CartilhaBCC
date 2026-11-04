@@ -81,3 +81,7 @@
     }
   }
 }
+
+html, body {
+  background-color: var(--color-zinc-950);
+}
