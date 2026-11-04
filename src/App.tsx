@@ -69,12 +69,12 @@ function TopicsBar({
       className={`${enabled ? 'animate-fade-in-right' : 'animate-fade-out-left'} w-full sm:w-[30%] bg-surface border-r border-divider flex flex-col shrink-0 h-screen`}
     >
       <div className="p-4 border-b border-divider">
-        <h2 className="text-sm font-bold uppercase tracking-wide text-selected">
+        <h2 className="text-lg font-bold uppercase tracking-wide text-selected">
           Tópicos
         </h2>
       </div>
       
-      <nav className="flex flex-col p-2 overflow-y-auto">
+      <nav className="flex flex-col p-2 overflow-y-auto text-md font-bold">
         {names.map((n) => {
           const isSelected = selected === n;
           return (
