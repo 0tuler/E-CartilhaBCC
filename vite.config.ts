@@ -8,6 +8,6 @@ export default defineConfig(({ command }) => {
   return {
     plugins: [react(), tailwindcss(), svgr()],
     // No GitHub Pages usa o nome do repositório, no dev local usa '/'
-    base: command === "build" ? "/TrabGrupoHabSoc/" : "/",
+    base: command === "build" ? "/E-CartilhaBCC/" : "/",
   };
 });
