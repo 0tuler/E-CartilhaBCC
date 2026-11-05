@@ -113,8 +113,8 @@ function EmptyState() {
   </h2>
   <p className="text-lg font-bold">
   Selecione um tópico no menu lateral para visualizar o vídeo.<br/>
-  Clique no botão no canto superior direito para visualizar os tópicos disponíveis <br/>
-  caso esqueça como utilizar a aplicativo, clique no botão de ajuda no topo esquerdo.
+  Clique no botão no canto superior direito para visualizar os tópicos disponíveis. <br/>
+  Caso esqueça como utilizar o aplicativo, clique no botão de ajuda no topo esquerdo.
     </p>
   </div>
 }
